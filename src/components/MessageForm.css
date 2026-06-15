@@ -1,0 +1,43 @@
+.message-form {
+  padding: 30px;
+  border-radius: 20px;
+  max-width: 500px;
+  margin: 0 auto;
+  text-align: center;
+}
+.message-form h3 {
+  color: #ff4f81;
+  font-family: 'Playfair Display', serif;
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+.message-form textarea {
+  width: 100%;
+  height: 120px;
+  padding: 15px;
+  border: 2px solid #ffb6c1;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 16px;
+  resize: none;
+  margin-bottom: 20px;
+  background: rgba(255, 255, 255, 0.8);
+  outline: none;
+  transition: all 0.3s;
+  box-sizing: border-box;
+}
+.message-form textarea:focus {
+  border-color: #ff4f81;
+  box-shadow: 0 0 10px rgba(255, 79, 129, 0.2);
+}
+.app.dark-mode .message-form textarea {
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border-color: #555;
+}
+.app.dark-mode .message-form textarea:focus {
+  border-color: #f5d020;
+}
+.app.dark-mode .message-form h3 {
+  color: #f5d020;
+}

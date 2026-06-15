@@ -1,0 +1,73 @@
+.love-map-container {
+  padding: 40px;
+  border-radius: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.love-map-timeline {
+  position: relative;
+  padding-left: 30px;
+}
+.love-map-timeline::before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(to bottom, #ff758c, #ff7eb3);
+  border-radius: 4px;
+}
+.map-node {
+  position: relative;
+  margin-bottom: 30px;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 15px 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  transition: transform 0.3s;
+}
+.map-node:hover {
+  transform: translateX(10px);
+}
+.map-icon {
+  position: absolute;
+  left: -48px;
+  top: 15px;
+  width: 36px;
+  height: 36px;
+  background: white;
+  border: 3px solid #ff4f81;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  z-index: 2;
+}
+.map-content h4 {
+  color: #d81b60;
+  margin-bottom: 5px;
+  font-size: 18px;
+}
+.map-content p {
+  color: #666;
+  font-size: 14px;
+  margin: 0;
+}
+.app.dark-mode .love-map-container h3 {
+  color: #f5d020 !important;
+}
+.app.dark-mode .map-node {
+  background: rgba(0, 0, 0, 0.5);
+}
+.app.dark-mode .map-content h4 {
+  color: #fff;
+}
+.app.dark-mode .map-content p {
+  color: #ccc;
+}
+.app.dark-mode .map-icon {
+  background: #2a2a35;
+  border-color: #f5d020;
+}
