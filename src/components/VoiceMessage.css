@@ -4,6 +4,16 @@
   padding: 30px;
   max-width: 400px;
 }
+.voice-message-container h3 {
+  color: #ff4f81;
+  font-family: 'Playfair Display', serif;
+  margin-bottom: 15px;
+}
+.voice-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
 .voice-btn {
   background: #ff4f81;
   border: none;
@@ -21,7 +31,27 @@
   background: #d81b60;
 }
 .voice-icon {
+  width: 28px;
+  color: white;
+  font-size: 22px;
+  font-weight: 800;
+  text-align: center;
+}
+.voice-replay-btn {
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 79, 129, 0.12);
+  color: #ff4f81;
+  cursor: pointer;
   font-size: 24px;
+  font-weight: 800;
+  transition: transform 0.25s, background 0.25s;
+}
+.voice-replay-btn:hover {
+  background: rgba(255, 79, 129, 0.22);
+  transform: rotate(-20deg) scale(1.05);
 }
 .voice-waves {
   display: flex;
@@ -44,6 +74,26 @@
 .voice-btn.playing .voice-waves span:nth-child(3) { animation-delay: 0.2s; }
 .voice-btn.playing .voice-waves span:nth-child(4) { animation-delay: 0.3s; }
 .voice-btn.playing .voice-waves span:nth-child(5) { animation-delay: 0.4s; }
+.voice-progress {
+  width: min(260px, 80%);
+  height: 6px;
+  margin: 18px auto 0;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 79, 129, 0.14);
+}
+.voice-progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #ff4f81, #ff9ab5);
+  transition: width 0.2s linear;
+}
+.voice-message-container p {
+  margin-top: 12px;
+  font-size: 14px;
+  color: #666;
+}
 
 @keyframes soundwave {
   0% { height: 5px; }
@@ -65,4 +115,20 @@
 }
 .app.dark-mode .voice-waves span {
   background: #2a2a35;
+}
+.app.dark-mode .voice-icon {
+  color: #2a2a35;
+}
+.app.dark-mode .voice-replay-btn {
+  background: rgba(245, 208, 32, 0.12);
+  color: #f5d020;
+}
+.app.dark-mode .voice-replay-btn:hover {
+  background: rgba(245, 208, 32, 0.22);
+}
+.app.dark-mode .voice-progress {
+  background: rgba(245, 208, 32, 0.16);
+}
+.app.dark-mode .voice-progress span {
+  background: linear-gradient(90deg, #f5d020, #f53803);
 }
