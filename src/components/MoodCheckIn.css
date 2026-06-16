@@ -1,0 +1,114 @@
+.mood-check-in {
+  width: min(720px, 100%);
+  margin: 34px auto 0;
+  padding: 28px;
+  text-align: center;
+  border-radius: 18px;
+}
+
+.mood-heading span {
+  display: block;
+  color: #ff4f81;
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(24px, 3vw, 34px);
+  font-weight: 800;
+}
+
+.mood-heading p {
+  margin-top: 8px;
+  color: #666;
+  font-size: 15px;
+}
+
+.mood-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.mood-option {
+  min-height: 88px;
+  padding: 14px 10px;
+  border: 1px solid rgba(255, 79, 129, 0.18);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.58);
+  color: #d81b60;
+  cursor: pointer;
+  font-weight: 800;
+  transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+}
+
+.mood-option span {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 28px;
+}
+
+.mood-option:hover,
+.mood-option.selected {
+  transform: translateY(-4px);
+  border-color: #ff4f81;
+  box-shadow: 0 10px 26px rgba(255, 79, 129, 0.18);
+}
+
+.mood-option:disabled {
+  cursor: wait;
+  opacity: 0.75;
+}
+
+.mood-reply {
+  margin: 22px auto 0;
+  padding: 18px;
+  max-width: 560px;
+  border-radius: 16px;
+  background: rgba(255, 79, 129, 0.08);
+  color: #6a2440;
+}
+
+.mood-reply p {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  line-height: 1.55;
+}
+
+.mood-reply small {
+  display: block;
+  margin-top: 10px;
+  color: #d81b60;
+  font-weight: 800;
+}
+
+.mood-reply .mood-error {
+  color: #b00020;
+}
+
+.app.dark-mode .mood-heading span,
+.app.dark-mode .mood-reply small {
+  color: #f5d020;
+}
+
+.app.dark-mode .mood-heading p {
+  color: #ddd;
+}
+
+.app.dark-mode .mood-option {
+  background: rgba(245, 208, 32, 0.08);
+  border-color: rgba(245, 208, 32, 0.18);
+  color: #f5d020;
+}
+
+.app.dark-mode .mood-option:hover,
+.app.dark-mode .mood-option.selected {
+  border-color: #f5d020;
+  box-shadow: 0 10px 26px rgba(245, 208, 32, 0.16);
+}
+
+.app.dark-mode .mood-reply {
+  background: rgba(245, 208, 32, 0.08);
+  color: #f7f0d0;
+}
+
+.app.dark-mode .mood-reply .mood-error {
+  color: #ff9aa8;
+}

@@ -1,94 +1,60 @@
-import { useCallback } from "react";
-import Particles from "react-tsparticles";
-import { loadFull } from "tsparticles";
+import { useMemo, type CSSProperties } from "react";
+
+const PARTICLE_COUNT = 36;
+
+type Particle = {
+  id: number;
+  left: number;
+  size: number;
+  duration: number;
+  delay: number;
+  drift: number;
+  opacity: number;
+  symbol: string;
+};
+
+type ParticleStyle = CSSProperties & {
+  "--particle-drift": string;
+};
+
+const createParticles = (isDarkMode: boolean): Particle[] =>
+  Array.from({ length: PARTICLE_COUNT }, (_, index) => ({
+    id: index,
+    left: Math.random() * 100,
+    size: isDarkMode ? 4 + Math.random() * 4 : 12 + Math.random() * 14,
+    duration: isDarkMode ? 12 + Math.random() * 10 : 10 + Math.random() * 8,
+    delay: Math.random() * -18,
+    drift: -40 + Math.random() * 80,
+    opacity: isDarkMode ? 0.35 + Math.random() * 0.45 : 0.25 + Math.random() * 0.45,
+    symbol: isDarkMode ? "✦" : index % 3 === 0 ? "✧" : "♥",
+  }));
 
 const ParticlesBackground = ({ isDarkMode }: { isDarkMode: boolean }) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const particlesInit = useCallback(async (engine: any) => {
-    await loadFull(engine);
-  }, []);
+  const particles = useMemo(() => createParticles(isDarkMode), [isDarkMode]);
 
   return (
-    <Particles
-      id="tsparticles"
-      init={particlesInit}
-      options={{
-        background: {
-          color: {
-            value: "transparent",
-          },
-        },
-        fpsLimit: 60,
-        particles: {
-          color: {
-            value: isDarkMode ? ["#ffffff", "#f5d020"] : ["#ffb6c1", "#ff69b4", "#fff0f5"],
-          },
-          links: {
-            enable: isDarkMode,
-            color: "#f5d020",
-            distance: 150,
-            opacity: 0.4,
-            width: 1,
-          },
-          move: {
-            direction: isDarkMode ? "none" : "bottom",
-            enable: true,
-            outModes: {
-              default: "out",
-            },
-            random: true,
-            speed: isDarkMode ? 0.3 : 1.5,
-            straight: false,
-          },
-          number: {
-            density: {
-              enable: true,
-              area: 800,
-            },
-            value: isDarkMode ? 80 : 30,
-          },
-          opacity: {
-            value: isDarkMode ? { min: 0.2, max: 0.8 } : { min: 0.5, max: 1 },
-            animation: {
-              enable: isDarkMode,
-              speed: 1,
-              minimumValue: 0.1,
-            }
-          },
-          shape: {
-            type: isDarkMode ? "circle" : ["circle", "star"],
-          },
-          size: {
-            value: isDarkMode ? { min: 1, max: 3 } : { min: 3, max: 7 },
-          },
-        },
-        interactivity: {
-          events: {
-            onHover: {
-              enable: isDarkMode,
-              mode: "grab",
-            },
-          },
-          modes: {
-            grab: {
-              distance: 140,
-              links: {
-                opacity: 1,
-              },
-            },
-          },
-        },
-        detectRetina: true,
-      }}
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%",
-        zIndex: -1,
-      }}
-    />
+    <div
+      className={`particles-background ${isDarkMode ? "stars" : "hearts"}`}
+      aria-hidden="true"
+    >
+      {particles.map((particle) => {
+        const style: ParticleStyle = {
+          left: `${particle.left}%`,
+          width: `${particle.size}px`,
+          height: `${particle.size}px`,
+          animationDuration: `${particle.duration}s`,
+          animationDelay: `${particle.delay}s`,
+          opacity: particle.opacity,
+          "--particle-drift": `${particle.drift}px`,
+        };
+
+        return (
+          <span key={particle.id} className="particle" style={style}>
+            {particle.symbol}
+          </span>
+        );
+      })}
+    </div>
   );
 };
 

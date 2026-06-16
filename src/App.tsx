@@ -1,9 +1,8 @@
-import { useState, type MouseEvent, useEffect, useRef } from "react";
+import { useState, type MouseEvent, useEffect } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import "./App.css";
 import bg from "./assets/bg.png";
-import musicFile from "./assets/music.mp3";
 import { TypeAnimation } from "react-type-animation";
 import Confetti from "react-confetti";
 
@@ -14,6 +13,9 @@ import {
   questions,
   bucketList,
   reasons,
+  dailyLoveReasons,
+  starWishes,
+  endingLines,
 } from "./data";
 import Preloader from "./components/Preloader";
 import MagicCursor from "./components/MagicCursor";
@@ -28,9 +30,33 @@ import LoveMap from "./components/LoveMap";
 import DailyChallenge from "./components/DailyChallenge";
 import PhotoBook from "./components/PhotoBook";
 import VoiceMessage from "./components/VoiceMessage";
+import VoiceRecorder from "./components/VoiceRecorder";
 import LoveTimer from "./components/LoveTimer";
 import LoveRoulette from "./components/LoveRoulette";
 import SecretVault from "./components/SecretVault";
+import MoodCheckIn from "./components/MoodCheckIn";
+
+const OFFICIAL_MUSIC_VIDEO_ID = "__kGJZ-kPno";
+const officialMusicEmbedUrl = `https://www.youtube.com/embed/${OFFICIAL_MUSIC_VIDEO_ID}?autoplay=1&loop=1&playlist=${OFFICIAL_MUSIC_VIDEO_ID}&rel=0`;
+const DAY_MS = 1000 * 60 * 60 * 24;
+const wishStarPositions = [
+  { top: "18%", left: "8%" },
+  { top: "28%", left: "88%" },
+  { top: "48%", left: "13%" },
+  { top: "62%", left: "82%" },
+  { top: "78%", left: "22%" },
+];
+
+const getNextBirthday = (date: Date) => {
+  const nextBirthday = new Date(date.getFullYear(), 10, 7);
+  nextBirthday.setHours(0, 0, 0, 0);
+
+  if (nextBirthday.getTime() < date.getTime()) {
+    nextBirthday.setFullYear(date.getFullYear() + 1);
+  }
+
+  return nextBirthday;
+};
 
 const playPopSound = () => {
   try {
@@ -147,7 +173,6 @@ function App() {
 
   // Audio state
   const [isPlaying, setIsPlaying] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Confetti state
   const [isConfettiExploding, setIsConfettiExploding] = useState(false);
@@ -155,6 +180,10 @@ function App() {
 
   // Ultimate Upgrades states
   const [showVouchers, setShowVouchers] = useState(false);
+  const [activeWishIndex, setActiveWishIndex] = useState<number | null>(null);
+  const [activeTimelineIndex, setActiveTimelineIndex] = useState<number | null>(
+    null,
+  );
   const [clickHearts, setClickHearts] = useState<
     { id: number; x: number; y: number }[]
   >([]);
@@ -183,14 +212,7 @@ function App() {
   }, []);
 
   const toggleAudio = () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-      } else {
-        audioRef.current.play();
-      }
-      setIsPlaying(!isPlaying);
-    }
+    setIsPlaying((prev) => !prev);
   };
 
   const handlePasswordSubmit = () => {
@@ -206,13 +228,7 @@ function App() {
       pw === "chui chui"
     ) {
       setCurrentScreen("QA");
-      // Auto play music when entering QA
-      if (audioRef.current) {
-        audioRef.current
-          .play()
-          .then(() => setIsPlaying(true))
-          .catch(() => setIsPlaying(false));
-      }
+      setIsPlaying(true);
     } else {
       showAlert("Oops!", "Sai mật khẩu rồi bé ơi 🥺");
     }
@@ -226,12 +242,18 @@ function App() {
     }
   };
 
-  const startDate: Date = new Date("2022-11-07");
+  const startDate: Date = new Date(2022, 10, 7);
   const today: Date = new Date();
 
-  const birthday: Date = new Date("2026-11-07T00:00:00");
+  const birthday: Date = getNextBirthday(today);
   const diffBday: number = birthday.getTime() - today.getTime();
   const bdayDays: number = Math.ceil(diffBday / (1000 * 60 * 60 * 24));
+  const dailyReason =
+    dailyLoveReasons[Math.floor(today.getTime() / DAY_MS) % dailyLoveReasons.length];
+  const activeWish =
+    activeWishIndex !== null ? starWishes[activeWishIndex] : null;
+  const activeTimelineEvent =
+    activeTimelineIndex !== null ? timelineEvents[activeTimelineIndex] : null;
 
   const handleNoHover = (e: MouseEvent<HTMLButtonElement>) => {
     const btn = e.currentTarget;
@@ -262,8 +284,26 @@ function App() {
       <MagicCursor />
       <ParticlesBackground isDarkMode={isDarkMode} />
 
-      {/* Global Audio */}
-      <audio ref={audioRef} src={musicFile} loop hidden />
+      {currentScreen === "MAIN" && isDarkMode && (
+        <div className="wish-sky" aria-label="Bầu trời điều ước">
+          <div className="wish-sky-label">Bầu trời điều ước</div>
+          {starWishes.map((wish, index) => (
+            <button
+              key={wish.title}
+              className="wish-star"
+              style={{
+                ...wishStarPositions[index],
+                animationDelay: `${index * 0.35}s`,
+              }}
+              onClick={() => setActiveWishIndex(index)}
+              aria-label={wish.title}
+              title={wish.title}
+            >
+              ✦
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Theme Toggle Button */}
       <button
@@ -283,6 +323,50 @@ function App() {
             <button className="btn" onClick={closeAlert}>
               Đóng
             </button>
+          </div>
+        </div>
+      )}
+
+      {activeWish && (
+        <div className="wish-modal-overlay" onClick={() => setActiveWishIndex(null)}>
+          <div className="wish-modal glass" onClick={(e) => e.stopPropagation()}>
+            <button
+              className="wish-close"
+              onClick={() => setActiveWishIndex(null)}
+              aria-label="Đóng điều ước"
+            >
+              ✕
+            </button>
+            <div className="wish-modal-star">✦</div>
+            <h3>{activeWish.title}</h3>
+            <p>{activeWish.message}</p>
+          </div>
+        </div>
+      )}
+
+      {activeTimelineEvent && (
+        <div
+          className="timeline-letter-overlay"
+          onClick={() => setActiveTimelineIndex(null)}
+        >
+          <div
+            className="timeline-letter-modal glass"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="timeline-letter-close"
+              onClick={() => setActiveTimelineIndex(null)}
+              aria-label="Đóng lá thư kỷ niệm"
+            >
+              ✕
+            </button>
+            <img
+              src={activeTimelineEvent.image}
+              alt={activeTimelineEvent.title}
+            />
+            <span>{activeTimelineEvent.date}</span>
+            <h3>{activeTimelineEvent.title}</h3>
+            <p>{activeTimelineEvent.letter}</p>
           </div>
         </div>
       )}
@@ -646,6 +730,13 @@ function App() {
                     ngày nữa tới sinh nhật em 🎂
                   </div>
                 )}
+
+                <div className="daily-love-note glass" data-aos="fade-up">
+                  <span>Hôm nay anh yêu em vì...</span>
+                  <p>{dailyReason}</p>
+                </div>
+
+                <MoodCheckIn />
               </section>
 
               <section className="section" style={{ textAlign: "center" }}>
@@ -796,6 +887,12 @@ function App() {
                           alt={event.title}
                           className="timeline-img"
                         />
+                        <button
+                          className="timeline-letter-btn"
+                          onClick={() => setActiveTimelineIndex(index)}
+                        >
+                          Mở thư ngày này
+                        </button>
                       </div>
                     </div>
                   ))}
@@ -924,7 +1021,33 @@ function App() {
                     >
                       Cực kỳ yêu em ❤️
                     </p>
+                    <div className="cinematic-ending" data-aos="fade-up">
+                      <div className="film-strip" aria-hidden="true">
+                        {photos.slice(0, 6).map((photo, index) => (
+                          <img
+                            key={`${photo}-${index}`}
+                            src={photo}
+                            alt=""
+                            style={{ animationDelay: `${index * 0.18}s` }}
+                          />
+                        ))}
+                      </div>
+                      <div className="ending-lines">
+                        {endingLines.map((line, index) => (
+                          <p
+                            key={line}
+                            style={{ animationDelay: `${index * 0.75}s` }}
+                          >
+                            {line}
+                          </p>
+                        ))}
+                      </div>
+                      <div className="ending-signature">
+                        Hết phim rồi, nhưng chuyện mình còn dài.
+                      </div>
+                    </div>
                     <VoiceMessage />
+                    <VoiceRecorder />
                     <div style={{ marginTop: "40px" }}>
                       <MessageForm />
                     </div>
@@ -968,6 +1091,17 @@ function App() {
       ))}
 
       <SecretVault isOpen={isVaultOpen} onClose={() => setIsVaultOpen(false)} />
+
+      {isPlaying && (
+        <div className="youtube-music-panel glass">
+          <iframe
+            src={officialMusicEmbedUrl}
+            title="Hơn Cả Yêu - Đức Phúc | Official Music Video"
+            allow="autoplay; encrypted-media; picture-in-picture"
+            allowFullScreen
+          />
+        </div>
+      )}
 
       {/* Floating Music Player */}
       <div

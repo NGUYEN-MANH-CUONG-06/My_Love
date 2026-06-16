@@ -1,7 +1,49 @@
 import { useState, useEffect } from "react";
 import "./LoveTimer.css";
 
-const START_DATE = new Date("2022-11-07T00:00:00");
+const START_DATE = new Date(2022, 10, 7, 0, 0, 0);
+
+const getElapsedTime = (startDate: Date, endDate: Date) => {
+  let years = endDate.getFullYear() - startDate.getFullYear();
+  let months = endDate.getMonth() - startDate.getMonth();
+  let days = endDate.getDate() - startDate.getDate();
+  let hours = endDate.getHours() - startDate.getHours();
+  let minutes = endDate.getMinutes() - startDate.getMinutes();
+  let seconds = endDate.getSeconds() - startDate.getSeconds();
+
+  if (seconds < 0) {
+    seconds += 60;
+    minutes -= 1;
+  }
+
+  if (minutes < 0) {
+    minutes += 60;
+    hours -= 1;
+  }
+
+  if (hours < 0) {
+    hours += 24;
+    days -= 1;
+  }
+
+  if (days < 0) {
+    const daysInPreviousMonth = new Date(
+      endDate.getFullYear(),
+      endDate.getMonth(),
+      0,
+    ).getDate();
+
+    days += daysInPreviousMonth;
+    months -= 1;
+  }
+
+  if (months < 0) {
+    months += 12;
+    years -= 1;
+  }
+
+  return { years, months, days, hours, minutes, seconds };
+};
 
 export default function LoveTimer() {
   const [time, setTime] = useState({
@@ -14,25 +56,13 @@ export default function LoveTimer() {
   });
 
   useEffect(() => {
-    const timer = setInterval(() => {
+    const updateTimer = () => {
       const now = new Date();
-      const difference = now.getTime() - START_DATE.getTime();
+      setTime(getElapsedTime(START_DATE, now));
+    };
 
-      const years = Math.floor(difference / (1000 * 60 * 60 * 24 * 365));
-      const months = Math.floor(
-        (difference % (1000 * 60 * 60 * 24 * 365)) / (1000 * 60 * 60 * 24 * 30),
-      );
-      const days = Math.floor(
-        (difference % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24),
-      );
-      const hours = Math.floor(
-        (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
-      );
-      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-
-      setTime({ years, months, days, hours, minutes, seconds });
-    }, 1000);
+    updateTimer();
+    const timer = setInterval(updateTimer, 1000);
 
     return () => clearInterval(timer);
   }, []);

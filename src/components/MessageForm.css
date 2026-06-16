@@ -30,6 +30,38 @@
   border-color: #ff4f81;
   box-shadow: 0 0 10px rgba(255, 79, 129, 0.2);
 }
+.message-form .btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+  transform: none;
+}
+.message-send-zone {
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+  min-width: 220px;
+}
+.letter-flight {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  pointer-events: none;
+  font-size: 26px;
+  transform: translate(-50%, -50%);
+  animation: letterFlight 1.2s ease-out forwards;
+  z-index: 2;
+}
+.message-status {
+  margin-top: 14px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.message-status.success {
+  color: #d81b60;
+}
+.message-status.error {
+  color: #b00020;
+}
 .app.dark-mode .message-form textarea {
   background: rgba(0, 0, 0, 0.5);
   color: white;
@@ -40,4 +72,24 @@
 }
 .app.dark-mode .message-form h3 {
   color: #f5d020;
+}
+.app.dark-mode .message-status.success {
+  color: #f5d020;
+}
+.app.dark-mode .message-status.error {
+  color: #ff9aa8;
+}
+
+@keyframes letterFlight {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -45%) scale(0.8) rotate(-8deg);
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(120px, -110px) scale(1.25) rotate(18deg);
+  }
 }
