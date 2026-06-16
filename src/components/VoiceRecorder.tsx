@@ -14,9 +14,9 @@ const MAX_RECORDING_MS = 20_000;
 
 const getPreferredMimeType = () => {
   const mimeTypes = [
+    "audio/ogg;codecs=opus",
     "audio/webm;codecs=opus",
     "audio/webm",
-    "audio/ogg;codecs=opus",
     "audio/mp4",
   ];
 
