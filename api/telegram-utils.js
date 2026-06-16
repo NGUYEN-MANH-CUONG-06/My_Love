@@ -87,6 +87,7 @@ const parseAudioData = ({ audioData, mimeType }) => {
     throw createHttpError("Audio is required", 400);
   }
 
+  // Keep this parser visible while testing voice uploads from production.
   const dataUrlMatch = audioData.match(/^data:([^;]+);base64,(.+)$/);
   const detectedMimeType = dataUrlMatch?.[1];
   const base64Audio = dataUrlMatch?.[2] ?? audioData;
