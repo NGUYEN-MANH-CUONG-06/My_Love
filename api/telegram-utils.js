@@ -155,7 +155,7 @@ const sendTelegramAudioFile = async ({
       body: formData,
     },
   );
-
+  // Telegram may reject the file if the mime type is not supported for the method, so we will try different methods in order of preference
   if (!telegramResponse.ok) {
     const errorBody = await telegramResponse.json().catch(() => null);
     const description =
