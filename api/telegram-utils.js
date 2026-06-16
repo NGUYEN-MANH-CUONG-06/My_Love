@@ -147,7 +147,7 @@ const sendTelegramAudioFile = async ({
   ) {
     formData.append("duration", String(Math.round(durationSeconds)));
   }
-
+  // For sendAudio, we can set the performer and title to make it look nicer in Telegram
   const telegramResponse = await fetch(
     `https://api.telegram.org/bot${botToken}/${method}`,
     {
