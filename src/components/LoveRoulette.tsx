@@ -38,9 +38,14 @@ export default function LoveRoulette() {
     // Điểm giữa của target option
     const targetCenter = randomOption * sliceAngle + sliceAngle / 2;
     // Để targetCenter nằm dưới mũi tên (đỉnh 270 độ), wheel cần quay thêm (270 - targetCenter)
-    const targetRotation = 360 * 5 + (270 - targetCenter);
+    const targetAngle = (270 - targetCenter + 360) % 360;
 
-    setRotation(rotation + targetRotation);
+    setRotation((currentRotation) => {
+      const currentAngle = ((currentRotation % 360) + 360) % 360;
+      const angleToTarget = (targetAngle - currentAngle + 360) % 360;
+
+      return currentRotation + 360 * 5 + angleToTarget;
+    });
 
     setTimeout(() => {
       setIsSpinning(false);
