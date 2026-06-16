@@ -87,6 +87,7 @@ const parseAudioData = ({ audioData, mimeType }) => {
     throw createHttpError("Audio is required", 400);
   }
 
+  // MediaRecorder can include codec parameters before the base64 payload.
   const dataUrlMatch = audioData.match(/^data:([^,]*?);base64,(.+)$/i);
   const detectedMimeType = dataUrlMatch?.[1];
   const base64Audio = dataUrlMatch?.[2] ?? audioData;
