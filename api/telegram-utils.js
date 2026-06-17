@@ -87,8 +87,8 @@ const parseAudioData = ({ audioData, mimeType }) => {
     throw createHttpError("Audio is required", 400);
   }
 
-  // Keep this parser visible while testing voice uploads from production.
-  const dataUrlMatch = audioData.match(/^data:([^;]+);base64,(.+)$/);
+  // MediaRecorder can include codec parameters before the base64 payload.
+  const dataUrlMatch = audioData.match(/^data:([^,]*?);base64,(.+)$/i);
   const detectedMimeType = dataUrlMatch?.[1];
   const base64Audio = dataUrlMatch?.[2] ?? audioData;
   const cleanBase64 = base64Audio.replace(/\s/g, "");
@@ -141,7 +141,11 @@ const sendTelegramAudioFile = async ({
   formData.append("caption", caption);
   formData.append("parse_mode", "HTML");
 
-  if (Number.isFinite(durationSeconds) && durationSeconds > 0) {
+  if (
+    (method === "sendVoice" || method === "sendAudio") &&
+    Number.isFinite(durationSeconds) &&
+    durationSeconds > 0
+  ) {
     formData.append("duration", String(Math.round(durationSeconds)));
   }
 
@@ -208,14 +212,29 @@ export const sendTelegramVoiceMessage = async ({
         caption,
       });
     } catch (audioError) {
-      throw createHttpError(
-        audioError instanceof Error
-          ? audioError.message
-          : voiceError instanceof Error
-            ? voiceError.message
-            : "Could not send voice message",
-        getErrorStatus(audioError),
-      );
+      try {
+        await sendTelegramAudioFile({
+          botToken,
+          chatId,
+          method: "sendDocument",
+          fieldName: "document",
+          buffer: audio.buffer,
+          mimeType: audio.mimeType,
+          durationSeconds,
+          caption,
+        });
+      } catch (documentError) {
+        throw createHttpError(
+          documentError instanceof Error
+            ? documentError.message
+            : audioError instanceof Error
+              ? audioError.message
+              : voiceError instanceof Error
+                ? voiceError.message
+                : "Could not send voice message",
+          getErrorStatus(documentError),
+        );
+      }
     }
   }
 };
